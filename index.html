@@ -5,38 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Music Viewer</title>
     <link rel="stylesheet" href="style.css">
-    <!-- PDF.js -->
+    
+    <!-- Librería PDF.js (Necesaria para ver los PDFs) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
 </head>
 <body>
 
+    <!-- BOTÓN MENÚ MÓVIL: Solo aparece en pantallas pequeñas -->
+    <button id="mobileMenuBtn" onclick="toggleMenu()">☰ Menú</button>
+
     <div class="container">
-        <!-- Panel Lateral -->
+        
+        <!-- PANEL LATERAL (LISTA DE CANCIONES) -->
         <aside class="sidebar">
             <h2>PDF Music Viewer</h2>
             
             <div class="upload-section">
-                <!-- Input oculto estéticamente o visible -->
                 <input type="file" id="fileInput" accept=".pdf, .jpg, .jpeg, .png">
                 <button onclick="subirArchivo()">+ Guardar Partitura</button>
             </div>
 
             <ul id="listaPartituras">
-                <!-- Aquí se generan los <li> con JS -->
+                <!-- La lista se genera automáticamente con JavaScript -->
             </ul>
         </aside>
 
-        <!-- Visor -->
+        <!-- VISOR PRINCIPAL (PARTITURA) -->
         <main class="visor" id="visorContainer">
+            <!-- Indicador de pantalla siempre encendida -->
             <div id="statusWakeLock" class="status-off">Pantalla: Normal</div>
             
+            <!-- Aquí se pintará el PDF o la Imagen -->
             <div id="contenidoPartitura">
-                <p style="color:#aaa; margin-top:50px;">Selecciona una partitura</p>
+                <p style="color:#aaa; margin-top:50px; font-size: 0.9rem;">
+                    Selecciona una partitura para comenzar
+                </p>
             </div>
         </main>
     </div>
 
+    <!-- Lógica del programa -->
     <script src="script.js"></script>
 </body>
 </html>

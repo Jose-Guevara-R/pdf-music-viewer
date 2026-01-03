@@ -15,18 +15,16 @@ async function cargarLista() {
         lista.forEach(item => {
             const li = document.createElement('li');
             
-            // Nombre (Click para abrir)
             const span = document.createElement('span');
             span.textContent = item.nombre;
             span.className = 'song-name';
             span.onclick = () => verPartitura(item.id, item.tipo_mime, li);
 
-            // Botón Borrar (Click para eliminar)
             const btn = document.createElement('button');
             btn.innerHTML = '🗑️'; 
             btn.className = 'btn-delete';
             btn.onclick = (e) => {
-                e.stopPropagation(); // Evita abrir la partitura al borrar
+                e.stopPropagation(); 
                 borrarPartitura(item.id, item.nombre);
             };
 
@@ -34,27 +32,22 @@ async function cargarLista() {
             li.appendChild(btn);
             ul.appendChild(li);
         });
-    } catch (error) {
-        console.error(error);
-    }
+    } catch (error) { console.error(error); }
 }
 
 async function borrarPartitura(id, nombre) {
     if(!confirm(`¿Eliminar "${nombre}"?`)) return;
-
     try {
         const res = await fetch(`/api/partituras/${id}`, { method: 'DELETE' });
         if(res.ok) {
             document.getElementById('contenidoPartitura').innerHTML = '<p style="color:#aaa; margin-top:50px;">Selecciona una partitura</p>';
             actualizarEstadoWakeLock(false);
             cargarLista();
-        } else {
-            alert('Error al eliminar');
-        }
+        } else { alert('Error al eliminar'); }
     } catch(e) { alert('Error de red'); }
 }
 
-// --- 2. SUBIDA CON COMPRESIÓN ---
+// --- 2. SUBIDA ---
 async function subirArchivo() {
     const input = document.getElementById('fileInput');
     if (input.files.length === 0) return alert('Selecciona archivo');
@@ -63,13 +56,11 @@ async function subirArchivo() {
     const formData = new FormData();
     const btn = document.querySelector('.upload-section button');
 
-    // Validación PDF > 4.5MB
     if (file.type === 'application/pdf') {
-        if (file.size > 4.5 * 1024 * 1024) return alert('PDF muy pesado. Máximo 4.5MB para Vercel.');
+        if (file.size > 4.5 * 1024 * 1024) return alert('PDF muy pesado (Máx 4.5MB).');
         formData.append('archivo', file);
         await enviarData(formData, input);
     } 
-    // Compresión Imagen
     else if (file.type.startsWith('image/')) {
         btn.textContent = "Comprimiendo...";
         btn.disabled = true;
@@ -87,14 +78,8 @@ async function subirArchivo() {
 async function enviarData(formData, input) {
     try {
         const res = await fetch('/api/subir', { method: 'POST', body: formData });
-        if (res.ok) { 
-            alert('Guardado!'); 
-            input.value = ''; 
-            cargarLista(); 
-        } else { 
-            const d = await res.json(); 
-            alert('Error: ' + (d.error || 'Desconocido')); 
-        }
+        if (res.ok) { alert('Guardado!'); input.value = ''; cargarLista(); } 
+        else { const d = await res.json(); alert('Error: ' + (d.error || 'Desconocido')); }
     } catch(e) { alert('Error de red'); }
 }
 
@@ -123,6 +108,11 @@ function comprimirImagen(file) {
 
 // --- 3. VISOR ---
 async function verPartitura(id, type, li) {
+    // [NUEVO] Cerrar menú automáticamente en móvil
+    if (window.innerWidth <= 768) {
+        document.querySelector('.sidebar').classList.add('oculto');
+    }
+
     document.querySelectorAll('li').forEach(l => l.classList.remove('active'));
     li.classList.add('active');
     
@@ -153,6 +143,12 @@ async function verPartitura(id, type, li) {
             container.appendChild(img);
         }
     } catch(e) { container.innerHTML = '<p>Error al cargar</p>'; }
+}
+
+// --- 4. FUNCIONES MENÚ MÓVIL ---
+function toggleMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('oculto');
 }
 
 // Wake Lock

@@ -1,8 +1,24 @@
 body { margin: 0; font-family: sans-serif; background: #1e1e1e; color: #e0e0e0; height: 100vh; overflow: hidden; }
-.container { display: flex; height: 100vh; }
+.container { display: flex; height: 100vh; position: relative; }
+
+/* Botón Menú Móvil (Oculto en PC) */
+#mobileMenuBtn {
+    display: none; /* En PC no se ve */
+    position: fixed;
+    top: 10px; left: 10px;
+    z-index: 2000;
+    background: #ff9800;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px black;
+    cursor: pointer;
+}
 
 /* SIDEBAR */
-.sidebar { width: 280px; background: #2d2d2d; border-right: 1px solid #444; display: flex; flex-direction: column; padding: 15px; }
+.sidebar { width: 280px; background: #2d2d2d; border-right: 1px solid #444; display: flex; flex-direction: column; padding: 15px; transition: transform 0.3s ease; }
 .sidebar h2 { color: #ff9800; margin-top: 0; font-size: 1.2rem; }
 
 /* Upload */
@@ -14,47 +30,50 @@ body { margin: 0; font-family: sans-serif; background: #1e1e1e; color: #e0e0e0; 
 
 /* Lista */
 #listaPartituras { list-style: none; padding: 0; overflow-y: auto; flex-grow: 1; }
-#listaPartituras li { 
-    padding: 10px; 
-    border-bottom: 1px solid #3d3d3d; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    transition: background 0.2s;
-}
+#listaPartituras li { padding: 12px 10px; border-bottom: 1px solid #3d3d3d; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
 #listaPartituras li:hover { background: #3d3d3d; }
 #listaPartituras li.active { background: #007bff; color: white; border-left: 4px solid #ff9800; }
 
-/* Texto de la canción */
-.song-name {
-    cursor: pointer;
-    flex-grow: 1;
-    white-space: nowrap; /* IMPORTANTE: Esto evita que ocupe 2 líneas */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 10px;
-}
-
-/* Botón Borrar */
-.btn-delete {
-    background: none; border: none; cursor: pointer; font-size: 1.2rem; 
-    color: #ff4d4d; opacity: 0.6; transition: transform 0.2s;
-}
-.btn-delete:hover { opacity: 1; transform: scale(1.2); }
+.song-name { cursor: pointer; flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px; font-size: 1rem; }
+.btn-delete { background: none; border: none; cursor: pointer; font-size: 1.3rem; color: #ff4d4d; opacity: 0.7; }
 
 /* VISOR */
-.visor { flex-grow: 1; overflow-y: auto; background: #121212; position: relative; padding: 20px; text-align: center; }
+.visor { flex-grow: 1; overflow-y: auto; background: #121212; position: relative; padding: 10px; text-align: center; }
+#contenidoPartitura { margin-top: 10px; }
 #contenidoPartitura img, #contenidoPartitura canvas { max-width: 100%; height: auto; margin-bottom: 20px; background: white; box-shadow: 0 4px 10px black; }
 
 /* Wake Lock */
-#statusWakeLock { position: absolute; top: 10px; right: 20px; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; z-index: 999; }
+#statusWakeLock { position: absolute; top: 10px; right: 10px; padding: 5px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: bold; z-index: 999; opacity: 0.8; }
 .status-on { background: #28a745; color: white; }
 .status-off { background: #dc3545; color: white; }
 
-/* Responsive móvil */
+/* --- MÓVIL (Aquí ocurre la magia) --- */
 @media (max-width: 768px) {
-    .container { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; max-height: 35vh; padding: 10px; box-sizing: border-box; }
-    .upload-section { display: flex; gap: 5px; }
-    .upload-section input { margin: 0; width: 50%; }
+    /* Mostramos el botón de menú */
+    #mobileMenuBtn { display: block; }
+
+    /* El menú ahora es una capa encima (Overlay) */
+    .sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        width: 80%; /* Ocupa casi toda la pantalla */
+        height: 100vh;
+        z-index: 1500;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.8);
+        transform: translateX(0); /* Visible por defecto */
+    }
+
+    /* Clase para esconder el menú */
+    .sidebar.oculto {
+        transform: translateX(-100%); /* Lo saca de la pantalla a la izquierda */
+    }
+
+    /* El visor ocupa todo el ancho siempre */
+    .visor {
+        width: 100%;
+        padding-top: 50px; /* Espacio para el botón de menú */
+    }
+
+    /* Ajuste para que el título no estorbe */
+    .sidebar h2 { margin-top: 40px; } 
 }
