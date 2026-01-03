@@ -103,3 +103,21 @@ body { margin: 0; font-family: sans-serif; background: #1e1e1e; color: #e0e0e0; 
     #mobileMenuBtn { top: 15px; left: 15px; }
     #statusWakeLock { top: 15px; right: 15px; font-size: 0.7rem; opacity: 0.6; }
 }
+
+/* Estilo normal del botón (Cuando el menú está abierto) */
+    #mobileMenuBtn { 
+        display: block; 
+        opacity: 1; /* Totalmente visible */
+        transition: opacity 0.3s ease; /* Transición suave */
+    }
+
+    /* NUEVO: Estilo "Fantasma" (Cuando estás leyendo la partitura) */
+    #mobileMenuBtn.btn-ghost {
+        opacity: 0.15; /* Muy transparente (casi invisible) */
+    }
+
+    /* Al tocar el botón fantasma, que se ilumine un poco */
+    #mobileMenuBtn.btn-ghost:active, 
+    #mobileMenuBtn.btn-ghost:hover {
+        opacity: 1;
+    }

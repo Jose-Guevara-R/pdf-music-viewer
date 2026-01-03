@@ -2,6 +2,8 @@ let wakeLock = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     cargarLista();
+    // [NUEVO] Inicializar estado del botón en móvil (si empezamos con menú abierto)
+    checkMenuState();
 });
 
 // --- 1. LISTA Y BORRADO ---
@@ -108,9 +110,10 @@ function comprimirImagen(file) {
 
 // --- 3. VISOR ---
 async function verPartitura(id, type, li) {
-    // [NUEVO] Cerrar menú automáticamente en móvil
+    // Si estamos en móvil, ocultamos menú y activamos botón transparente
     if (window.innerWidth <= 768) {
         document.querySelector('.sidebar').classList.add('oculto');
+        checkMenuState(); // Actualiza transparencia
     }
 
     document.querySelectorAll('li').forEach(l => l.classList.remove('active'));
@@ -145,10 +148,26 @@ async function verPartitura(id, type, li) {
     } catch(e) { container.innerHTML = '<p>Error al cargar</p>'; }
 }
 
-// --- 4. FUNCIONES MENÚ MÓVIL ---
+// --- 4. CONTROL MENÚ Y TRANSPARENCIA ---
+
 function toggleMenu() {
     const sidebar = document.querySelector('.sidebar');
     sidebar.classList.toggle('oculto');
+    checkMenuState(); // Revisar si debemos ponerlo transparente
+}
+
+// Función auxiliar para decidir si el botón debe ser transparente
+function checkMenuState() {
+    const sidebar = document.querySelector('.sidebar');
+    const btn = document.getElementById('mobileMenuBtn');
+    
+    // Si tiene la clase 'oculto', significa que estamos viendo partitura -> Poner fantasma
+    if (sidebar.classList.contains('oculto')) {
+        btn.classList.add('btn-ghost');
+    } else {
+        // Si el menú está visible -> Botón normal
+        btn.classList.remove('btn-ghost');
+    }
 }
 
 // Wake Lock
