@@ -99,4 +99,18 @@ app.post('/api/subir', upload.single('archivo'), async (req, res) => {
 // --- IMPORTANTE PARA VERCEL ---
 // En Vercel NO se usa app.listen(3000).
 // Simplemente exportamos la aplicación para que Vercel la ejecute como una función Serverless.
+
+// [NUEVO] Ruta D: Borrar una partitura
+app.delete('/api/partituras/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query('DELETE FROM partituras WHERE id = $1', [id]);
+        res.json({ message: 'Partitura eliminada correctamente' });
+    } catch (err) {
+        console.error('Error borrando:', err);
+        res.status(500).json({ error: 'No se pudo eliminar la partitura' });
+    }
+});
+
+
 module.exports = app;
