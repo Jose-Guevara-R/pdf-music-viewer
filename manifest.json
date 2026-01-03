@@ -1,11 +1,11 @@
 {
-  "name": "Visor Partituras",
-  "short_name": "Partituras",
+  "name": "PDF music viewer",
+  "short_name": "Visor Music",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e1e1e",
   "theme_color": "#2d2d2d",
-  "orientation": "portrait",
+  "orientation": "any", 
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3844/3844724.png",

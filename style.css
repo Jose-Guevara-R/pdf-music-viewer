@@ -47,22 +47,24 @@ body { margin: 0; font-family: sans-serif; background: #1e1e1e; color: #e0e0e0; 
 .status-on { background: #28a745; color: white; }
 .status-off { background: #dc3545; color: white; }
 
-/* --- MÓVIL: AJUSTES DE PANTALLA COMPLETA --- */
+/* --- MÓVIL Y TABLET (Vertical y Horizontal) --- */
 @media (max-width: 768px) {
-    /* Botón menú semi-transparente para que no tape notas */
+    /* Botón menú visible */
     #mobileMenuBtn { 
         display: block; 
-        opacity: 0.6; /* Un poco transparente */
+        opacity: 0.8;
     }
     
-    /* El menú lateral (oculto por defecto) */
+    /* MENÚ LATERAL */
     .sidebar {
         position: fixed; top: 0; left: 0;
-        width: 85%; height: 100vh;
+        width: 80%; 
+        height: 100vh; /* Ocupa toda la altura */
         z-index: 1500;
         box-shadow: 5px 0 15px rgba(0,0,0,0.8);
         transform: translateX(0);
         transition: transform 0.3s ease;
+        overflow-y: auto; /* IMPORTANTE: Permite bajar si el menú es largo en horizontal */
     }
 
     .sidebar.oculto { transform: translateX(-100%); }
@@ -70,31 +72,23 @@ body { margin: 0; font-family: sans-serif; background: #1e1e1e; color: #e0e0e0; 
     /* VISOR: Ocupa el 100% real */
     .visor {
         width: 100%;
-        padding: 0; /* SIN MÁRGENES */
+        padding: 0;
         margin: 0;
-        height: 100vh; /* Altura total */
+        /* height: auto; <--- Quitamos height 100vh para permitir scroll infinito en el PDF */
     }
 
-    /* El PDF/Imagen toca los bordes */
     #contenidoPartitura { margin-top: 0; }
     
     #contenidoPartitura img, 
     #contenidoPartitura canvas { 
-        width: 100%; /* Ancho total */
+        width: 100%; 
+        height: auto; /* Mantiene proporción al girar */
         margin-bottom: 0; 
-        box-shadow: none; /* Quitamos sombra para ganar espacio */
-        display: block; /* Elimina espacio extra debajo de imágenes */
+        box-shadow: none; 
+        display: block; 
     }
 
-    /* El botón de menú flota sobre la partitura sin moverla */
-    #mobileMenuBtn {
-        top: 10px; left: 10px;
-    }
-    
-    /* Movemos el indicador de "Pantalla ON" para que no estorbe */
-    #statusWakeLock {
-        top: 10px; right: 10px;
-        opacity: 0.5;
-        font-size: 0.6rem;
-    }
+    /* Ajustes botones flotantes */
+    #mobileMenuBtn { top: 10px; left: 10px; }
+    #statusWakeLock { top: 10px; right: 10px; font-size: 0.6rem; opacity: 0.6; }
 }
