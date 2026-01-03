@@ -1,4 +1,3 @@
-// api/index.js
 require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
@@ -6,111 +5,83 @@ const multer = require('multer');
 
 const app = express();
 
-// 1. Configuración de conexión a NEON (PostgreSQL)
-// Vercel requiere SSL activado para conexiones externas seguras.
+// 1. Configuración de Base de Datos (Neon)
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false 
-    }
+    ssl: { rejectUnauthorized: false }
 });
 
-// 2. Configuración de subida de archivos (Multer)
-// Guardamos en memoria RAM (buffer) antes de enviar a la BD.
-// IMPORTANTE: Establecemos un límite de seguridad de 4.5MB para cumplir con Vercel.
+// 2. Configuración de subida (Límite 4.5MB para Vercel)
 const storage = multer.memoryStorage();
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 4500000 } // 4.5 MB aprox.
+    limits: { fileSize: 4500000 } 
 });
 
 app.use(express.json());
 
-// --- RUTAS DE LA API ---
+// --- RUTAS ---
 
-// Ruta A: Obtener lista de todas las partituras
+// A. Listar partituras
 app.get('/api/partituras', async (req, res) => {
     try {
-        // Solo traemos ID y Nombre para no sobrecargar la lista inicial
         const result = await pool.query('SELECT id, nombre, tipo_mime FROM partituras ORDER BY nombre ASC');
-        res.status(200).json(result.rows);
+        res.json(result.rows);
     } catch (err) {
-        console.error('Error obteniendo lista:', err);
-        res.status(500).json({ error: 'Error interno al obtener partituras' });
+        console.error(err);
+        res.status(500).send('Error al listar');
     }
 });
 
-// Ruta B: Obtener el archivo binario (PDF o Imagen)
+// B. Obtener archivo
 app.get('/api/partituras/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        
-        // Consultar el archivo binario (datos)
         const result = await pool.query('SELECT tipo_mime, datos FROM partituras WHERE id = $1', [id]);
-
+        
         if (result.rows.length > 0) {
             const file = result.rows[0];
-            
-            // Le decimos al navegador qué tipo de archivo es (PDF, PNG, etc)
             res.setHeader('Content-Type', file.tipo_mime);
-            // Enviamos los datos crudos
             res.send(file.datos);
         } else {
-            res.status(404).send('Archivo no encontrado');
+            res.status(404).send('No encontrado');
         }
     } catch (err) {
-        console.error('Error obteniendo archivo:', err);
-        res.status(500).send('Error al descargar el archivo');
+        console.error(err);
+        res.status(500).send('Error');
     }
 });
 
-// Ruta C: Subir una nueva partitura
+// C. Subir archivo
 app.post('/api/subir', upload.single('archivo'), async (req, res) => {
     try {
-        // Validaciones
-        if (!req.file) {
-            return res.status(400).json({ error: 'No has seleccionado ningún archivo.' });
-        }
+        if (!req.file) return res.status(400).json({ error: 'Falta archivo' });
 
-        const nombre = req.file.originalname;
-        const tipo = req.file.mimetype;
-        const datos = req.file.buffer;
-
-        // Insertar en Base de Datos Neon
         await pool.query(
             'INSERT INTO partituras (nombre, tipo_mime, datos) VALUES ($1, $2, $3)',
-            [nombre, tipo, datos]
+            [req.file.originalname, req.file.mimetype, req.file.buffer]
         );
-
-        res.status(201).json({ message: 'Partitura guardada exitosamente' });
-
+        res.json({ message: 'Guardado' });
     } catch (err) {
-        console.error('Error subiendo archivo:', err);
-        
-        // Manejo específico si el archivo es muy grande (Error de Multer)
+        console.error(err);
         if (err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(413).json({ error: 'El archivo es muy pesado para la versión gratuita (Máx 4.5MB).' });
+            return res.status(413).json({ error: 'Archivo muy grande (Máx 4.5MB)' });
         }
-        
-        res.status(500).json({ error: 'Error al guardar en la base de datos.' });
+        res.status(500).send('Error al guardar');
     }
 });
 
-// --- IMPORTANTE PARA VERCEL ---
-// En Vercel NO se usa app.listen(3000).
-// Simplemente exportamos la aplicación para que Vercel la ejecute como una función Serverless.
-
-// [NUEVO] Ruta D: Borrar una partitura
+// D. Borrar archivo (NUEVO)
 app.delete('/api/partituras/:id', async (req, res) => {
     try {
         const { id } = req.params;
         await pool.query('DELETE FROM partituras WHERE id = $1', [id]);
-        res.json({ message: 'Partitura eliminada correctamente' });
+        res.json({ message: 'Eliminado' });
     } catch (err) {
-        console.error('Error borrando:', err);
-        res.status(500).json({ error: 'No se pudo eliminar la partitura' });
+        console.error(err);
+        res.status(500).send('Error al eliminar');
     }
 });
 
-
+// Exportar para Vercel
 module.exports = app;

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF music viewer</title>
+    <title>PDF Music Viewer</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Librería PDF.js -->
+    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
 </head>
@@ -14,21 +14,25 @@
     <div class="container">
         <!-- Panel Lateral -->
         <aside class="sidebar">
-            <h2>PDF music viewer</h2>
+            <h2>PDF Music Viewer</h2>
+            
             <div class="upload-section">
+                <!-- Input oculto estéticamente o visible -->
                 <input type="file" id="fileInput" accept=".pdf, .jpg, .jpeg, .png">
                 <button onclick="subirArchivo()">+ Guardar Partitura</button>
             </div>
+
             <ul id="listaPartituras">
-                <!-- Aquí se llenará la lista desde la BD -->
+                <!-- Aquí se generan los <li> con JS -->
             </ul>
         </aside>
 
-        <!-- Visor Principal -->
+        <!-- Visor -->
         <main class="visor" id="visorContainer">
             <div id="statusWakeLock" class="status-off">Pantalla: Normal</div>
+            
             <div id="contenidoPartitura">
-                <p style="color:#aaa; text-align:center; margin-top:50px;">Selecciona una partitura para comenzar</p>
+                <p style="color:#aaa; margin-top:50px;">Selecciona una partitura</p>
             </div>
         </main>
     </div>
