@@ -2,22 +2,43 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Music Viewer</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Configuración para que se ajuste perfecto al móvil -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     
-    <!-- Librería PDF.js (Necesaria para ver los PDFs) -->
+    <title>PDF Music Viewer</title>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- --- CONFIGURACIÓN PWA (INSTALABLE) --- -->
+    
+    <!-- Enlace al manifiesto (Identidad de la App) -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Color de la barra de estado en Android -->
+    <meta name="theme-color" content="#1e1e1e">
+    
+    <!-- Configuración específica para iOS (iPhone/iPad) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Partituras">
+    <!-- Ícono para iPhone (Usamos el mismo del manifest) -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3844/3844724.png">
+
+    <!-- --------------------------------------- -->
+    
+    <!-- Librería PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
 </head>
 <body>
 
-    <!-- BOTÓN MENÚ MÓVIL: Solo aparece en pantallas pequeñas -->
+    <!-- Botón Menú Móvil (Flotante) -->
     <button id="mobileMenuBtn" onclick="toggleMenu()">☰ Menú</button>
 
     <div class="container">
         
-        <!-- PANEL LATERAL (LISTA DE CANCIONES) -->
+        <!-- Panel Lateral (Lista) -->
         <aside class="sidebar">
             <h2>PDF Music Viewer</h2>
             
@@ -27,25 +48,35 @@
             </div>
 
             <ul id="listaPartituras">
-                <!-- La lista se genera automáticamente con JavaScript -->
+                <!-- Se llena con JS -->
             </ul>
         </aside>
 
-        <!-- VISOR PRINCIPAL (PARTITURA) -->
+        <!-- Visor Principal -->
         <main class="visor" id="visorContainer">
-            <!-- Indicador de pantalla siempre encendida -->
             <div id="statusWakeLock" class="status-off">Pantalla: Normal</div>
             
-            <!-- Aquí se pintará el PDF o la Imagen -->
             <div id="contenidoPartitura">
                 <p style="color:#aaa; margin-top:50px; font-size: 0.9rem;">
-                    Selecciona una partitura para comenzar
+                    Selecciona una partitura
                 </p>
             </div>
         </main>
     </div>
 
-    <!-- Lógica del programa -->
+    <!-- Lógica Principal -->
     <script src="script.js"></script>
+
+    <!-- REGISTRO DEL SERVICE WORKER (Para que sea instalable) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registrado', reg))
+                    .catch(err => console.log('Error Service Worker', err));
+            });
+        }
+    </script>
+
 </body>
 </html>
