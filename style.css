@@ -1,0 +1,25 @@
+body { margin: 0; font-family: sans-serif; background: #1e1e1e; color: white; height: 100vh; overflow: hidden; }
+
+.container { display: flex; height: 100vh; }
+
+/* Barra Lateral */
+.sidebar { width: 250px; background: #2d2d2d; border-right: 1px solid #444; display: flex; flex-direction: column; padding: 10px; }
+.sidebar h2 { font-size: 1.2rem; margin-bottom: 15px; color: #ff9800; }
+.upload-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #444; }
+.upload-section input { width: 100%; margin-bottom: 5px; color: #aaa; font-size: 0.8rem; }
+.upload-section button { width: 100%; padding: 8px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+.upload-section button:hover { background: #0056b3; }
+
+#listaPartituras { list-style: none; padding: 0; overflow-y: auto; flex-grow: 1; }
+#listaPartituras li { padding: 10px; cursor: pointer; border-bottom: 1px solid #3d3d3d; transition: background 0.2s; }
+#listaPartituras li:hover { background: #3d3d3d; }
+#listaPartituras li.active { background: #007bff; color: white; }
+
+/* Visor */
+.visor { flex-grow: 1; overflow-y: auto; position: relative; background: #121212; padding: 10px; text-align: center; }
+#contenidoPartitura img, #contenidoPartitura canvas { max-width: 100%; height: auto; margin-bottom: 10px; box-shadow: 0 0 10px black; }
+
+/* Estado del Wake Lock */
+#statusWakeLock { position: absolute; top: 10px; right: 10px; padding: 5px 10px; font-size: 0.8rem; border-radius: 4px; opacity: 0.7; z-index: 100; }
+.status-on { background: green; color: white; }
+.status-off { background: red; color: white; }
